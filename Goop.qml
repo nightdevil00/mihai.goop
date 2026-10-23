@@ -95,7 +95,10 @@ Scope {
         }
         onTyped: (tag, command) => {
             if (tag === "type") {
-                root.show("reply", "Typed in the terminal: " + command);
+                if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named)(:|$)/.test(command))
+                    root.show("reply", "Browser: " + command);
+                else
+                    root.show("reply", "Typed in the terminal: " + command);
                 root.mood = "rest";
             }
         }
@@ -183,6 +186,40 @@ Scope {
         return match ? match[1].trim() : "";
     }
 
+    // Parse a browser-control request. Returns {action, arg} or null.
+    function browserCommand(text) {
+        const t = (text || "").trim();
+        if (!t)
+            return null;
+        let m;
+        if (/^(open|new)\s+tab$/i.test(t))
+            return { action: "new_tab", arg: "" };
+        if (/^(open|new)\s+window$/i.test(t))
+            return { action: "new_window", arg: "" };
+        if (/^(reload|refresh)(\s+page)?$/i.test(t))
+            return { action: "reload", arg: "" };
+        if (/^(back|go\s+back)$/i.test(t))
+            return { action: "back", arg: "" };
+        if (/^(forward|go\s+forward)$/i.test(t))
+            return { action: "forward", arg: "" };
+        if (/^close\s+tab$/i.test(t))
+            return { action: "close_tab", arg: "" };
+        m = t.match(/^close\s+tab\s+(called|named)\s+(.+)$/i);
+        if (m)
+            return { action: "close_tab_named", arg: m[2] };
+        m = t.match(/^switch\s+to\s+tab\s+(.+)$/i) || t.match(/^focus\s+tab\s+(.+)$/i);
+        if (m)
+            return { action: "switch_tab", arg: m[1] };
+        m = t.match(/^(go\s+to|navigate\s+to|open|visit)\s+(.+)$/i);
+        if (m) {
+            const arg = m[2].trim();
+            // Only treat as navigation when it looks like a URL or host.
+            if (/[./]/.test(arg) || /^https?:/i.test(arg))
+                return { action: "navigate", arg: arg };
+        }
+        return null;
+    }
+
     function celebrate() {
         mood = "happy";
         happyTimer.restart();
@@ -263,10 +300,24 @@ Scope {
             mood = "rest";
             return;
         }
+        const cls = target.cls.toLowerCase();
+        const browser = ["google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
+            "brave-browser", "brave", "microsoft-edge", "microsoft-edge-stable",
+            "firefox", "firefox-esr", "zen-browser", "zen", "vivaldi", "vivaldi-stable",
+            "opera"].indexOf(cls) >= 0;
+        // Browser commands are handled locally, without an agent.
+        if (browser) {
+            const cmd = root.browserCommand(text);
+            if (cmd) {
+                root.show("busy", "Controlling the browser…");
+                agents.browserAction(target.address, target.cls, cmd.action, cmd.arg, "type");
+                return;
+            }
+        }
         // Over a terminal, "run <command>" or "!<command>" types the command into it and presses Enter, with no agent.
         // Only real terminal emulators can receive typed keystrokes. Nautilus and editors
         // are handled through their own context (run in folder / apply file change).
-        const terminal = ["foot", "alacritty", "kitty", "com.mitchellh.ghostty", "org.wezfurlong.wezterm"].indexOf(target.cls.toLowerCase()) >= 0;
+        const terminal = ["foot", "alacritty", "kitty", "com.mitchellh.ghostty", "org.wezfurlong.wezterm"].indexOf(cls) >= 0;
         const typed = text.startsWith("!") ? text.slice(1) : (terminal && /^run\s+/i.test(text) ? text.replace(/^run\s+/i, "") : null);
         if (typed !== null) {
             agents.typeInto(target.address, target.cls, typed.trim(), "type");

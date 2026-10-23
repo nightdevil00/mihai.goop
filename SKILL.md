@@ -19,6 +19,13 @@ In agent mode the agent may run commands in the window's folder.
 - If the file changed since goop read it, Apply refuses.
 - Zed and VS Code reload the file themselves; for Neovim, enable autoread.
 
+## When the creature is over a browser window
+
+- Recognised requests are handled locally: `open tab`, `new window`, `reload`, `back`,
+  `forward`, `close tab`, `close tab called <name>`, `switch to tab <name>`,
+  `navigate to <url>` / `open <url>`.
+- Other requests are sent to the agent with the window title as context.
+
 ## When the creature is over a Nautilus window
 
 - The agent runs the requested command in the folder Nautilus is showing and reports the result.

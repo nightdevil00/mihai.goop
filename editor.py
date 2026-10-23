@@ -48,6 +48,10 @@ LANGUAGES = {
 TITLE_SEPARATOR = re.compile(r"\s[—–-]\s")
 TERMINALS = {"foot", "alacritty", "kitty", "com.mitchellh.ghostty", "org.wezfurlong.wezterm"}
 NAUTILUS = {"org.gnome.nautilus", "nautilus"}
+BROWSERS = {"google-chrome", "google-chrome-stable", "chromium", "chromium-browser",
+            "brave-browser", "brave", "microsoft-edge", "microsoft-edge-stable",
+            "firefox", "firefox-esr", "zen-browser", "zen", "vivaldi", "vivaldi-stable",
+            "opera", "org.mozilla.firefox"}
 SHELLS = {"bash", "zsh", "fish", "sh", "dash"}
 
 
@@ -280,6 +284,8 @@ def context(title, cls, pid, request=""):
         editor, file_path = "neovim", nvim
     elif (cls or "").lower() in NAUTILUS:
         editor = "nautilus"
+    elif (cls or "").lower() in BROWSERS:
+        editor = "browser"
     else:
         editor, file_name, project_name = parse_title(title, cls)
         if file_name:
@@ -312,6 +318,16 @@ def context(title, cls, pid, request=""):
             "cwd": cwd,
         })
         return {"ok": True, "context_file": path, "file": None, "editor": "nautilus", "diagnostics": None,
+                "error": ""}
+
+    if file_path is None and editor == "browser":
+        path = write_json(os.path.join(CONTEXT_DIR, stamp() + ".json"), {
+            "editor": "browser",
+            "window_title": title,
+            "window_class": cls,
+            "file": None,
+        })
+        return {"ok": True, "context_file": path, "file": None, "editor": "browser", "diagnostics": None,
                 "error": ""}
 
     if file_path is None:
@@ -428,6 +444,55 @@ def type_into(address, window_class, command):
     return {"ok": True, "typed": command}
 
 
+def browser_action(address, window_class, action, arg=""):
+    if (window_class or "").lower() not in BROWSERS:
+        raise RuntimeError("Browser actions only work in a browser window.")
+    focus = f'hl.dsp.focus({{ window = "address:{address}" }})'
+    subprocess.run(["hyprctl", "dispatch", focus], check=True, capture_output=True)
+    time.sleep(0.2)
+    action = (action or "").lower()
+    if action == "new_tab":
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "t"], check=True)
+    elif action == "new_window":
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "n"], check=True)
+    elif action == "close_tab":
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "w"], check=True)
+    elif action == "reload":
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "r"], check=True)
+    elif action == "back":
+        subprocess.run(["wtype", "-M", "alt", "-k", "Left"], check=True)
+    elif action == "forward":
+        subprocess.run(["wtype", "-M", "alt", "-k", "Right"], check=True)
+    elif action == "navigate":
+        if not arg.strip():
+            raise RuntimeError("No address to navigate to.")
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "l"], check=True)
+        time.sleep(0.15)
+        subprocess.run(["wtype", "--", arg.strip()], check=True)
+        subprocess.run(["wtype", "-k", "Return"], check=True)
+    elif action == "switch_tab":
+        if not arg.strip():
+            raise RuntimeError("No tab name given.")
+        subprocess.run(["wtype", "-M", "ctrl", "-M", "shift", "-k", "a"], check=True)
+        time.sleep(0.25)
+        subprocess.run(["wtype", "--", arg.strip()], check=True)
+        time.sleep(0.15)
+        subprocess.run(["wtype", "-k", "Return"], check=True)
+    elif action == "close_tab_named":
+        if not arg.strip():
+            raise RuntimeError("No tab name given.")
+        subprocess.run(["wtype", "-M", "ctrl", "-M", "shift", "-k", "a"], check=True)
+        time.sleep(0.25)
+        subprocess.run(["wtype", "--", arg.strip()], check=True)
+        time.sleep(0.15)
+        subprocess.run(["wtype", "-k", "Return"], check=True)
+        time.sleep(0.2)
+        subprocess.run(["wtype", "-M", "ctrl", "-k", "w"], check=True)
+    else:
+        raise RuntimeError(f"Unknown browser action {action!r}.")
+    return {"ok": True, "action": action, "arg": arg.strip()}
+
+
 def main(argv):
     if len(argv) < 3:
         print(__doc__, file=sys.stderr)
@@ -443,6 +508,8 @@ def main(argv):
             result = revert(argv[2])
         elif command == "type":
             result = type_into(argv[2], argv[3], argv[4])
+        elif command == "browser":
+            result = browser_action(argv[2], argv[3], argv[4], argv[5] if len(argv) > 5 else "")
         else:
             print(f"unknown command {command!r}", file=sys.stderr)
             return 2

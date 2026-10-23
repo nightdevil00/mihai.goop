@@ -77,6 +77,10 @@ QtObject {
         run("type", tag, ["python3", editorScript, "type", address, windowClass, command]);
     }
 
+    function browserAction(address, windowClass, action, arg, tag) {
+        run("browser", tag, ["python3", editorScript, "browser", address, windowClass, action, arg]);
+    }
+
     function parse(stdout) {
         try {
             return JSON.parse(stdout);
@@ -125,6 +129,12 @@ QtObject {
                 root.typed(tag, answer.typed);
             else
                 root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not type the command"));
+        } else if (kind === "browser") {
+            const answer = parse(stdout);
+            if (answer && answer.ok)
+                root.typed(tag, answer.action + (answer.arg ? ": " + answer.arg : ""));
+            else
+                root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not control the browser"));
         } else if (kind === "revert") {
             const answer = parse(stdout);
             if (answer && answer.ok)

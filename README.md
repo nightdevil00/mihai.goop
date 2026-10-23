@@ -141,6 +141,8 @@ backs up the original first, and **Undo** restores it.
 - **Zed** and **VS Code**: the file and project come from the window title. Both reload
   files that have no unsaved edits.
 - **Nautilus**: commands run in the folder its window is showing.
+- **Browser** (Chrome, Chromium, Brave, Firefox, Zen, Vivaldi, Edge, Opera): local
+  commands such as `open tab`, `close tab called X`, `navigate to example.com`.
 
 ## Checks
 
