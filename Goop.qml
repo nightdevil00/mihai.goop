@@ -223,12 +223,20 @@ Scope {
         m = t.match(/^(switch|go)\s+to\s+tab\s+(.+)$/i) || t.match(/^focus\s+tab\s+(.+)$/i);
         if (m)
             return { action: "switch_tab", arg: m[1] };
-        m = t.match(/^(go\s+to|navigate(\s+to)?|open|visit)\s+(.+)$/i);
+        // Typo-tolerant navigation: "go to", "got to", "goto", "navigate", "open", "visit".
+        m = t.match(/^(g(?:oto|ot|o)|navigate(?:\s+to)?|open|visit)\s+(.+)$/i);
         if (m) {
             const arg = m[2].trim();
-            // Treat anything after navigate/open as a target; add https if no scheme.
             return { action: "navigate", arg: arg };
         }
+        // If the request contains a URL anywhere, navigate to it.
+        m = t.match(/(https?:\/\/\S+)/i);
+        if (m)
+            return { action: "navigate", arg: m[1] };
+        // A bare host like "x.com" or "example.com/path".
+        m = t.match(/\b([a-z0-9][a-z0-9.-]*\.[a-z]{2,}(?:\/\S*)?)\b/i);
+        if (m && !/\s/.test(m[1]))
+            return { action: "navigate", arg: m[1] };
         return null;
     }
 
