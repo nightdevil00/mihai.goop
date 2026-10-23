@@ -6,7 +6,8 @@ connect: a command-line agent, or an OpenAI-compatible API.
 
 ![goop](assets/goop.png)
 
-It runs as an Omarchy shell plugin (`mihai.goop`).
+It runs as an Omarchy shell plugin (`mihai.goop`). It is theme-aware and follows the
+active Omarchy theme via `qs.Commons.Color`.
 
 ## How it works
 

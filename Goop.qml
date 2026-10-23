@@ -2,6 +2,7 @@ import Quickshell
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Controls
+import qs.Commons
 
 // goop, the Omarchy shell panel: a creature you can drop anywhere on the desktop, on
 // any monitor. Click it to type a request; the request runs for the window under it.
@@ -36,7 +37,7 @@ Scope {
     property bool dragging: false
     property bool promptOpen: false
 
-    readonly property color bodyColor: (dragging || mood !== "rest") ? "#ff3d6e" : "#3b3b42"
+    readonly property color bodyColor: (dragging || mood !== "rest") ? Commons.Color.accent : Commons.Color.muted
 
     // What the bubble under the creature shows: "", "reply", "error", "proposal", "applied", "busy".
     property string bubbleState: ""
@@ -371,9 +372,9 @@ Scope {
                     width: 340
                     height: bubbleColumn.implicitHeight + 20
                     radius: 12
-                    color: "#111114"
+                    color: Commons.Color.popups.background
                     border.width: 1
-                    border.color: root.bubbleState === "error" ? "#ff3d6e" : "#2e2e36"
+                    border.color: root.bubbleState === "error" ? Commons.Color.urgent : Commons.Color.popups.border
 
                     Column {
                         id: bubbleColumn
@@ -387,7 +388,7 @@ Scope {
                             textFormat: Text.PlainText
                             width: parent.width
                             text: root.reply
-                            color: root.bubbleState === "error" ? "#ff8fab" : "#ffffff"
+                            color: root.bubbleState === "error" ? Commons.Color.urgent : Commons.Color.popups.text
                             font.pixelSize: 13
                             wrapMode: Text.Wrap
                         }
@@ -457,9 +458,9 @@ Scope {
                     width: 150
                     height: 74
                     radius: 10
-                    color: "#111114"
+                    color: Commons.Color.menu.background
                     border.width: 1
-                    border.color: "#2e2e36"
+                    border.color: Commons.Color.menu.border
 
                     Column {
                         anchors.fill: parent
@@ -475,7 +476,7 @@ Scope {
                                 width: menu.width - 12
                                 height: 30
                                 radius: 6
-                                color: itemArea.containsMouse ? "#2a2a31" : "transparent"
+                                color: itemArea.containsMouse ? Commons.Color.menu.selectedBackground : "transparent"
 
                                 Text {
                                     textFormat: Text.PlainText
@@ -483,7 +484,7 @@ Scope {
                                     anchors.left: parent.left
                                     anchors.leftMargin: 10
                                     text: modelData.label
-                                    color: "#ffffff"
+                                    color: Commons.Color.menu.text
                                     font.pixelSize: 13
                                 }
 

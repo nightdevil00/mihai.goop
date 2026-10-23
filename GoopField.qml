@@ -1,4 +1,5 @@
 import QtQuick
+import qs.Commons
 
 // A labeled single-line text box for the settings window.
 Column {
@@ -17,7 +18,7 @@ Column {
 
         textFormat: Text.PlainText
         text: root.label
-        color: "#9a9aa6"
+        color: Commons.Color.muted
         font.pixelSize: 12
     }
 
@@ -25,9 +26,9 @@ Column {
         width: root.width
         height: 32
         radius: 8
-        color: "#1c1c21"
+        color: Commons.Color.menu.background
         border.width: 1
-        border.color: input.activeFocus ? "#ff3d6e" : "#2e2e36"
+        border.color: input.activeFocus ? Commons.Color.accent : Commons.Color.menu.border
 
         TextInput {
             id: input
@@ -35,7 +36,7 @@ Column {
             anchors.leftMargin: 10
             anchors.rightMargin: 10
             verticalAlignment: TextInput.AlignVCenter
-            color: "#ffffff"
+            color: Commons.Color.menu.text
             font.pixelSize: 13
             clip: true
             echoMode: root.secret ? TextInput.Password : TextInput.Normal

@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
+import qs.Commons
 
 // One view of the creature. The shell owns its position and mood and gives every
 // screen the same values, so it can sit across monitors. It follows the pointer through
@@ -27,7 +28,7 @@ Item {
     readonly property real rx: radius * (1 + stretch * 0.6) * (1 + 0.025 * breath)
     readonly property real ry: radius * (1 - stretch * 0.3) * (1 - 0.02 * breath)
     readonly property bool active: dragging || mood !== "rest"
-    readonly property color bodyColor: active ? "#ff3d6e" : "#3b3b42"
+    readonly property color bodyColor: active ? Commons.Color.accent : Commons.Color.muted
     readonly property real gazeX: Math.max(-1, Math.min(1, (targetX - centerX) / 200)) * 4
 
     signal pressed(real pointX, real pointY)
@@ -122,7 +123,7 @@ Item {
 
         Rectangle {
             width: 7; height: face.eyeHeight; radius: 3.5
-            color: "#ffffff"
+            color: Commons.Color.foreground
             x: 45 - 12 - 3.5 + root.gazeX
             y: 45 - 2 - face.eyeHeight / 2 + face.eyeLift
             Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
@@ -130,7 +131,7 @@ Item {
         }
         Rectangle {
             width: 7; height: face.eyeHeight; radius: 3.5
-            color: "#ffffff"
+            color: Commons.Color.foreground
             x: 45 + 12 - 3.5 + root.gazeX
             y: 45 - 2 - face.eyeHeight / 2 + face.eyeLift
             Behavior on height { NumberAnimation { duration: 180; easing.type: Easing.OutBack } }
@@ -146,7 +147,7 @@ Item {
             id: heart
             required property int index
             text: "♥"
-            color: "#ff8fab"
+            color: Commons.Color.urgent
             font.pixelSize: 11 + index * 2
             x: 56 + index * 9
             y: 4
@@ -175,7 +176,7 @@ Item {
     Rectangle {
         x: 74; y: 14
         width: 8; height: 8; radius: 4
-        color: "#7cffb2"
+        color: Commons.Color.accent
         opacity: root.mood === "thinking" ? 1 : 0
         Behavior on opacity { NumberAnimation { duration: 200 } }
     }
@@ -186,7 +187,7 @@ Item {
             x: 4 + index * 7
             y: 8
             width: 4; height: 4; radius: 2
-            color: "#ffffff"
+            color: Commons.Color.foreground
             opacity: root.mood === "thinking" ? 1 : 0
             Behavior on opacity { NumberAnimation { duration: 200 } }
             SequentialAnimation on y {

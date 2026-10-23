@@ -1,4 +1,5 @@
 import QtQuick
+import qs.Commons
 
 Rectangle {
     id: root
@@ -12,8 +13,8 @@ Rectangle {
     implicitHeight: 30
     radius: 8
     color: primary
-        ? (area.containsMouse ? "#ff5a84" : "#ff3d6e")
-        : (area.containsMouse ? "#2a2a31" : "#1c1c21")
+        ? (area.containsMouse ? Commons.Color.accent : Commons.Color.accent)
+        : (area.containsMouse ? Commons.Color.menu.selectedBackground : Commons.Color.menu.background)
     opacity: enabled ? 1 : 0.4
 
     Text {
@@ -22,7 +23,7 @@ Rectangle {
         id: label
         anchors.centerIn: parent
         text: root.text
-        color: "#ffffff"
+        color: Commons.Color.menu.text
         font.pixelSize: 13
     }
 

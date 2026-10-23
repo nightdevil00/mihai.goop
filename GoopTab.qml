@@ -1,4 +1,5 @@
 import QtQuick
+import qs.Commons
 
 // The black tab the creature sits in. It is the notch at the top of the screen
 // and the tab on a docked window's top border. Expanded, it becomes the message field.
@@ -19,7 +20,7 @@ Rectangle {
     y: topY
     width: expanded ? expandedWidth : collapsedWidth
     height: 36
-    color: "#000000"
+    color: Commons.Color.background
     bottomLeftRadius: 18
     bottomRightRadius: 18
 
@@ -38,7 +39,7 @@ Rectangle {
         anchors.leftMargin: 16
         anchors.rightMargin: 16
         verticalAlignment: TextInput.AlignVCenter
-        color: "#ffffff"
+        color: Commons.Color.foreground
         font.pixelSize: 14
         clip: true
         opacity: root.expanded ? 1 : 0
@@ -56,7 +57,7 @@ Rectangle {
             textFormat: Text.PlainText
             anchors.verticalCenter: parent.verticalCenter
             text: "Message…"
-            color: "#6b6b75"
+            color: Commons.Color.muted
             font: input.font
             visible: input.text === ""
         }

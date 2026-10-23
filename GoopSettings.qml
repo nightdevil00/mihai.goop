@@ -1,5 +1,6 @@
 import QtQuick
 import Quickshell
+import qs.Commons
 
 // Right-click goop > Settings. Edits a copy of the configuration and only writes
 // it to disk when Save is pressed.
@@ -9,7 +10,7 @@ FloatingWindow {
     required property var agents
 
     title: "goop settings"
-    color: "#111114"
+    color: Commons.Color.menu.background
     implicitWidth: 760
     implicitHeight: 480
     visible: false
@@ -144,7 +145,7 @@ FloatingWindow {
 
                 textFormat: Text.PlainText
                 text: "Agents"
-                color: "#ffffff"
+                color: "Commons.Color.menu.text"
                 font.pixelSize: 15
                 font.bold: true
             }
@@ -158,7 +159,7 @@ FloatingWindow {
                     width: 200
                     height: 44
                     radius: 8
-                    color: index === win.selected ? "#2a2a31" : "#1c1c21"
+                    color: index === win.selected ? Commons.Color.menu.selectedBackground : Commons.Color.menu.background
 
                     Column {
                         anchors.verticalCenter: parent.verticalCenter
@@ -167,13 +168,13 @@ FloatingWindow {
                         Text {
                             textFormat: Text.PlainText
                             text: { win.revision; return row.modelData.name; }
-                            color: "#ffffff"
+                            color: "Commons.Color.menu.text"
                             font.pixelSize: 13
                         }
                         Text {
                             textFormat: Text.PlainText
                             text: (row.modelData.type === "cli" ? "CLI" : "API") + (win.draft.active === row.modelData.id ? " · default" : "")
-                            color: "#8a8a95"
+                            color: Commons.Color.muted
                             font.pixelSize: 11
                         }
                     }
@@ -245,7 +246,7 @@ FloatingWindow {
                 textFormat: Text.PlainText
                 width: parent.width
                 text: win.status
-                color: "#c9c9d1"
+                color: Commons.Color.muted
                 font.pixelSize: 12
                 wrapMode: Text.Wrap
             }
