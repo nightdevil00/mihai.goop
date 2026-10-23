@@ -22,6 +22,7 @@ FloatingWindow {
     property int revision: 0
     property string status: ""
     property var modelList: []
+    property string pluginDir: ""
 
     function agentModel() {
         if (!current || !current.command)
@@ -278,6 +279,16 @@ FloatingWindow {
                     onClicked: {
                         if (!modelProc.running)
                             modelProc.running = true;
+                    }
+                }
+
+                GoopButton {
+                    text: "Use bundled opencode"
+                    visible: win.pluginDir !== ""
+                    onClicked: {
+                        const script = win.pluginDir.replace(/\/$/, "") + "/agents/opencode.py";
+                        const model = win.modelList.length ? win.modelList[0] : "opencode-go/beam-free";
+                        win.setValue("command", ["python3", script, "--model", model]);
                     }
                 }
             }

@@ -119,6 +119,7 @@ Scope {
     GoopSettings {
         id: settings
         agents: agents
+        pluginDir: decodeURIComponent(Qt.resolvedUrl(".").toString().replace("file://", ""))
     }
 
     GoopDock {
