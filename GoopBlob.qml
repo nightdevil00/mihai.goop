@@ -41,8 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    Behavior on x { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
-    Behavior on y { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    // Follow the cursor instantly while dragging; spring only while at rest.
+    Behavior on x { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    Behavior on y { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
 
 
     SequentialAnimation on breath {
