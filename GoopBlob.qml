@@ -41,9 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    // Spring gives the elastic stretch while dragging.
-    Behavior on x { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
-    Behavior on y { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
+    // No spring: follow exactly, eliminating drag lag.
+    // Behavior on x { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
+    // Behavior on y { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
 
 
     SequentialAnimation on breath {

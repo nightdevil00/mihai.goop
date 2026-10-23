@@ -272,9 +272,8 @@ Scope {
             posGY = lastDockGY !== 0 ? lastDockGY : dock.topY + 20;
             dock.detach();
         }
-        // Keep the creature centred on the cursor while dragging.
-        offsetGX = 0;
-        offsetGY = 0;
+        offsetGX = x - posGX;
+        offsetGY = y - posGY;
         dragging = true;
         happyTimer.stop();
         mood = "rest";
