@@ -41,8 +41,8 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    Behavior on x { SpringAnimation { spring: 16; damping: 0.85; mass: 0.25 } }
-    Behavior on y { SpringAnimation { spring: 16; damping: 0.85; mass: 0.25 } }
+    Behavior on x { SpringAnimation { spring: 24; damping: 0.75; mass: 0.2 } }
+    Behavior on y { SpringAnimation { spring: 24; damping: 0.75; mass: 0.2 } }
 
 
     SequentialAnimation on breath {
