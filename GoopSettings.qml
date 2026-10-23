@@ -1,6 +1,8 @@
 import QtQuick
+import QtQuick.Controls
 import Quickshell
-import qs.Commons as Commons
+import Quickshell.Io
+import qs.Commons as Commons as Commons
 
 // Right-click goop > Settings. Edits a copy of the configuration and only writes
 // it to disk when Save is pressed.
@@ -19,6 +21,45 @@ FloatingWindow {
     property int selected: -1
     property int revision: 0
     property string status: ""
+    property var modelList: []
+
+    function agentModel() {
+        if (!current || !current.command)
+            return "";
+        const i = current.command.indexOf("--model");
+        if (i >= 0 && i + 1 < current.command.length)
+            return current.command[i + 1];
+        return "";
+    }
+
+    function setAgentModel(model) {
+        if (!current)
+            return;
+        const cmd = (current.command || []).slice();
+        const i = cmd.indexOf("--model");
+        if (i >= 0 && i + 1 < cmd.length)
+            cmd[i + 1] = model;
+        else {
+            cmd.push("--model");
+            cmd.push(model);
+        }
+        setValue("command", cmd);
+    }
+
+    Process {
+        id: modelProc
+        command: ["opencode", "models"]
+        stdout: StdioCollector {
+            id: modelOut
+            waitForEnd: true
+        }
+        onExited: (code) => {
+            if (code === 0) {
+                const lines = modelOut.text.trim().split("\n").map(s => s.trim()).filter(s => s.length > 0);
+                win.modelList = lines;
+            }
+        }
+    }
 
     readonly property var current: selected >= 0 && selected < draft.agents.length ? draft.agents[selected] : null
 
@@ -111,6 +152,8 @@ FloatingWindow {
             draft = clone(agents.config);
             selectRow(draft.agents.length ? 0 : -1);
             status = "";
+            if (!modelProc.running)
+                modelProc.running = true;
         }
     }
 
@@ -205,6 +248,38 @@ FloatingWindow {
                 label: "Command (program and arguments, separated by spaces)"
                 visible: win.current !== null && win.current.type === "cli"
                 onEdited: (t) => win.setValue("command", t.split(" ").filter(s => s !== ""))
+            }
+
+            // Model picker for the bundled opencode agent.
+            Row {
+                spacing: 8
+                visible: win.current !== null && win.current.type === "cli"
+                         && win.current.command && win.current.command.join(" ").indexOf("opencode.py") >= 0
+                width: parent.width
+
+                Text {
+                    textFormat: Text.PlainText
+                    text: "Model:"
+                    color: Commons.Color.muted
+                    font.pixelSize: 12
+                    anchors.verticalCenter: parent.verticalCenter
+                }
+
+                ComboBox {
+                    id: modelCombo
+                    width: 280
+                    model: win.modelList
+                    currentIndex: win.modelList.length ? win.modelList.indexOf(win.agentModel()) : -1
+                    onActivated: (index) => win.setAgentModel(win.modelList[index])
+                }
+
+                GoopButton {
+                    text: "Refresh"
+                    onClicked: {
+                        if (!modelProc.running)
+                            modelProc.running = true;
+                    }
+                }
             }
 
             GoopField {
