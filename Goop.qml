@@ -265,7 +265,6 @@ Scope {
         // Keep the creature centred on the cursor while dragging.
         offsetGX = 0;
         offsetGY = 0;
-        console.log("beginDrag pointer", x, y, "pos", posGX, posGY, "offset", offsetGX, offsetGY);
         dragging = true;
         happyTimer.stop();
         mood = "rest";
@@ -276,7 +275,6 @@ Scope {
     function moveDrag(x, y) {
         posGX = x - offsetGX;
         posGY = y - offsetGY;
-        console.log("moveDrag pointer", x, y, "pos", posGX, posGY);
     }
 
     function endDrag(x, y, dragged) {

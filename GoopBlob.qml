@@ -41,9 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    // No spring: follow exactly, eliminating drag lag.
-    // Behavior on x { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
-    // Behavior on y { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    // Spring at rest; follow the cursor instantly while dragging.
+    Behavior on x { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    Behavior on y { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
 
 
     SequentialAnimation on breath {
