@@ -37,8 +37,7 @@ active Omarchy theme via `qs.Commons.Color`.
 Prerequisites: `python3`, Hyprland, `wtype`, and (for the bundled agent) `opencode`.
 
 ```sh
-git clone https://github.com/nightdevil00/mihai.goop ~/.config/omarchy/plugins/mihai.goop
-omarchy plugin enable mihai.goop
+omarchy plugin add https://github.com/nightdevil00/mihai.goop --enable --yes
 ```
 
 Edits to the QML files reload automatically. Right-click the creature for **Settings**
