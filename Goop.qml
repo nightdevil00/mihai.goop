@@ -226,7 +226,8 @@ Scope {
         // Typo-tolerant navigation: "go to", "got to", "goto", "navigate", "open", "visit".
         m = t.match(/^(g(?:oto|ot|o)|navigate(?:\s+to)?|open|visit)\s+(.+)$/i);
         if (m) {
-            const arg = m[2].trim();
+            // Drop a stray leading "to" left by typos like "got to URL".
+            const arg = m[2].trim().replace(/^to\s+/i, "");
             return { action: "navigate", arg: arg };
         }
         // If the request contains a URL anywhere, navigate to it.
