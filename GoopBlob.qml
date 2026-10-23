@@ -19,7 +19,7 @@ Item {
 
     readonly property real targetX: pullX
     readonly property real targetY: pullY
-    readonly property real radius: active ? 30 : 26
+    readonly property real radius: 26
     readonly property real kappa: 0.5523
     readonly property real centerX: x + width / 2
     readonly property real centerY: y + height / 2
@@ -41,9 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    // Spring at rest; follow the cursor instantly while dragging.
-    Behavior on x { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
-    Behavior on y { enabled: !root.dragging; SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    // Spring gives the elastic stretch while dragging.
+    Behavior on x { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
+    Behavior on y { SpringAnimation { spring: 12; damping: 0.7; mass: 0.3 } }
 
 
     SequentialAnimation on breath {
