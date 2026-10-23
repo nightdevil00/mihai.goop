@@ -61,7 +61,7 @@ keys). You can edit it by hand or through the Settings window.
       "type": "cli",
       "command": [
         "python3",
-        "/home/mihai/.config/omarchy/plugins/mihai.goop/agents/opencode.py",
+        "/home/$USER/.config/omarchy/plugins/mihai.goop/agents/opencode.py",
         "--model",
         "opencode-go/beam-free"
       ],
@@ -87,7 +87,7 @@ with a different model:
   "type": "cli",
   "command": [
     "python3",
-    "/home/mihai/.config/omarchy/plugins/mihai.goop/agents/opencode.py",
+    "/home/$USER/.config/omarchy/plugins/mihai.goop/agents/opencode.py",
     "--model",
     "openai/gpt-4.1"
   ],
