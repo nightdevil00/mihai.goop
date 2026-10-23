@@ -41,9 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    // Spring gives the elastic stretch while dragging.
-    Behavior on x { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
-    Behavior on y { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
+    // Follow the cursor exactly; no spring, so the body keeps its shape.
+    // Behavior on x { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
+    // Behavior on y { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
 
 
     SequentialAnimation on breath {
