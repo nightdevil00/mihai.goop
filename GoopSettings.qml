@@ -2,7 +2,7 @@ import QtQuick
 import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
-import qs.Commons as Commons as Commons
+import qs.Commons as Commons
 
 // Right-click goop > Settings. Edits a copy of the configuration and only writes
 // it to disk when Save is pressed.
