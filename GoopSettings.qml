@@ -45,6 +45,11 @@ FloatingWindow {
             cmd.push(model);
         }
         setValue("command", cmd);
+        if (commandField)
+            commandField.text = cmd.join(" ");
+        // Persist model changes immediately so the running agent uses them.
+        agents.save(draft);
+        status = "Saving…";
     }
 
     Process {
