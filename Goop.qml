@@ -37,7 +37,8 @@ Scope {
     property bool dragging: false
     property bool promptOpen: false
 
-    readonly property color bodyColor: (dragging || mood !== "rest") ? Commons.Color.accent : Commons.Color.muted
+    // The creature keeps its signature pink when active; only the idle body follows the theme.
+    readonly property color bodyColor: (dragging || mood !== "rest") ? "#ff3d6e" : Commons.Color.muted
 
     // What the bubble under the creature shows: "", "reply", "error", "proposal", "applied", "busy".
     property string bubbleState: ""

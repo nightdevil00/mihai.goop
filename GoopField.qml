@@ -28,7 +28,7 @@ Column {
         radius: 8
         color: Commons.Color.menu.background
         border.width: 1
-        border.color: input.activeFocus ? Commons.Color.accent : Commons.Color.menu.border
+        border.color: input.activeFocus ? "#ff3d6e" : Commons.Color.menu.border
 
         TextInput {
             id: input

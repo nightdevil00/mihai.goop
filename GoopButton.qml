@@ -13,7 +13,7 @@ Rectangle {
     implicitHeight: 30
     radius: 8
     color: primary
-        ? (area.containsMouse ? Commons.Color.accent : Commons.Color.accent)
+        ? (area.containsMouse ? "#ff5a84" : "#ff3d6e")
         : (area.containsMouse ? Commons.Color.menu.selectedBackground : Commons.Color.menu.background)
     opacity: enabled ? 1 : 0.4
 

@@ -28,7 +28,7 @@ Item {
     readonly property real rx: radius * (1 + stretch * 0.6) * (1 + 0.025 * breath)
     readonly property real ry: radius * (1 - stretch * 0.3) * (1 - 0.02 * breath)
     readonly property bool active: dragging || mood !== "rest"
-    readonly property color bodyColor: active ? Commons.Color.accent : Commons.Color.muted
+    readonly property color bodyColor: active ? "#ff3d6e" : Commons.Color.muted
     readonly property real gazeX: Math.max(-1, Math.min(1, (targetX - centerX) / 200)) * 4
 
     signal pressed(real pointX, real pointY)
@@ -147,7 +147,7 @@ Item {
             id: heart
             required property int index
             text: "♥"
-            color: Commons.Color.urgent
+            color: "#ff8fab"
             font.pixelSize: 11 + index * 2
             x: 56 + index * 9
             y: 4
