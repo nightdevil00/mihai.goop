@@ -95,9 +95,10 @@ Scope {
         }
         onTyped: (tag, command) => {
             if (tag === "type") {
-                if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named)(:|$)/.test(command))
+                if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named)(:|$)/.test(command)) {
                     root.show("reply", "Browser: " + command);
-                else
+                    autoCloseTimer.restart();
+                } else
                     root.show("reply", "Typed in the terminal: " + command);
                 root.mood = "rest";
             }
@@ -154,6 +155,15 @@ Scope {
         id: happyTimer
         interval: 1400
         onTriggered: if (root.mood === "happy") root.mood = "rest"
+    }
+
+    Timer {
+        id: autoCloseTimer
+        interval: 1000
+        onTriggered: {
+            root.bubbleState = "";
+            root.mood = "rest";
+        }
     }
 
     Timer {
