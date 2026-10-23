@@ -1,5 +1,5 @@
 import QtQuick
-import qs.Commons
+import qs.Commons as Commons
 
 // A labeled single-line text box for the settings window.
 Column {

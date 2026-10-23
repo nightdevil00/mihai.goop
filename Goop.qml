@@ -2,7 +2,7 @@ import Quickshell
 import Quickshell.Wayland
 import QtQuick
 import QtQuick.Controls
-import qs.Commons
+import qs.Commons as Commons
 
 // goop, the Omarchy shell panel: a creature you can drop anywhere on the desktop, on
 // any monitor. Click it to type a request; the request runs for the window under it.

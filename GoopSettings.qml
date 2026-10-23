@@ -1,6 +1,6 @@
 import QtQuick
 import Quickshell
-import qs.Commons
+import qs.Commons as Commons
 
 // Right-click goop > Settings. Edits a copy of the configuration and only writes
 // it to disk when Save is pressed.
@@ -145,7 +145,7 @@ FloatingWindow {
 
                 textFormat: Text.PlainText
                 text: "Agents"
-                color: "Commons.Color.menu.text"
+                color: Commons.Color.menu.text
                 font.pixelSize: 15
                 font.bold: true
             }
@@ -168,7 +168,7 @@ FloatingWindow {
                         Text {
                             textFormat: Text.PlainText
                             text: { win.revision; return row.modelData.name; }
-                            color: "Commons.Color.menu.text"
+                            color: Commons.Color.menu.text
                             font.pixelSize: 13
                         }
                         Text {

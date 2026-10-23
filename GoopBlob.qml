@@ -1,6 +1,6 @@
 import QtQuick
 import QtQuick.Shapes
-import qs.Commons
+import qs.Commons as Commons
 
 // One view of the creature. The shell owns its position and mood and gives every
 // screen the same values, so it can sit across monitors. It follows the pointer through

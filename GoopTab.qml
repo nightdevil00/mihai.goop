@@ -1,5 +1,5 @@
 import QtQuick
-import qs.Commons
+import qs.Commons as Commons
 
 // The black tab the creature sits in. It is the notch at the top of the screen
 // and the tab on a docked window's top border. Expanded, it becomes the message field.
