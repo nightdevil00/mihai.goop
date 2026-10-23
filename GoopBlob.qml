@@ -19,7 +19,7 @@ Item {
 
     readonly property real targetX: pullX
     readonly property real targetY: pullY
-    readonly property real radius: 26
+    readonly property real radius: active ? 30 : 26
     readonly property real kappa: 0.5523
     readonly property real centerX: x + width / 2
     readonly property real centerY: y + height / 2
