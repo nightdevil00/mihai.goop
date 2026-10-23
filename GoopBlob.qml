@@ -23,12 +23,7 @@ Item {
     readonly property real kappa: 0.5523
     readonly property real centerX: x + width / 2
     readonly property real centerY: y + height / 2
-    // A smoothed copy of the target lags behind, so the body can stretch without lagging.
-    property real smoothTargetX: targetX
-    property real smoothTargetY: targetY
-    Behavior on smoothTargetX { SpringAnimation { spring: 4; damping: 0.5; mass: 0.6 } }
-    Behavior on smoothTargetY { SpringAnimation { spring: 4; damping: 0.5; mass: 0.6 } }
-    readonly property real stretch: Math.min(Math.hypot(smoothTargetX - targetX, smoothTargetY - targetY) / 40, 1) * 1.2
+    readonly property real stretch: Math.min(Math.hypot(targetX - centerX, targetY - centerY) / 60, 1) * 1.2
     readonly property real angle: Math.atan2(targetY - centerY, targetX - centerX) * 180 / Math.PI
     readonly property real rx: radius * (1 + stretch * 0.6) * (1 + 0.025 * breath)
     readonly property real ry: radius * (1 - stretch * 0.3) * (1 - 0.02 * breath)
@@ -46,9 +41,9 @@ Item {
     x: targetX - width / 2
     y: targetY - height / 2
 
-    // Follow the cursor exactly; no spring, so the body keeps its shape.
-    // Behavior on x { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
-    // Behavior on y { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
+    // Spring keeps movement smooth and creates the elastic stretch.
+    Behavior on x { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    Behavior on y { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
 
 
     SequentialAnimation on breath {
