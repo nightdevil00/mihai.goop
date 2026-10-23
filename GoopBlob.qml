@@ -23,7 +23,7 @@ Item {
     readonly property real kappa: 0.5523
     readonly property real centerX: x + width / 2
     readonly property real centerY: y + height / 2
-    readonly property real stretch: Math.min(Math.hypot(targetX - centerX, targetY - centerY) / 120, 1) * 0.7
+    readonly property real stretch: Math.min(Math.hypot(targetX - centerX, targetY - centerY) / 60, 1) * 1.2
     readonly property real angle: Math.atan2(targetY - centerY, targetX - centerX) * 180 / Math.PI
     readonly property real rx: radius * (1 + stretch * 0.6) * (1 + 0.025 * breath)
     readonly property real ry: radius * (1 - stretch * 0.3) * (1 - 0.02 * breath)
@@ -42,8 +42,8 @@ Item {
     y: targetY - height / 2
 
     // Spring gives the elastic stretch while dragging.
-    Behavior on x { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
-    Behavior on y { SpringAnimation { spring: 8; damping: 0.6; mass: 0.4 } }
+    Behavior on x { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
+    Behavior on y { SpringAnimation { spring: 6; damping: 0.5; mass: 0.5 } }
 
 
     SequentialAnimation on breath {
