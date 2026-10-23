@@ -66,7 +66,10 @@ Scope {
     Shortcut {
         sequence: "Escape"
         context: Qt.ApplicationShortcut
-        onActivated: if (root.promptOpen) root.promptOpen = false
+        onActivated: {
+            if (root.promptOpen) root.promptOpen = false;
+            if (root.menuOpen) root.menuOpen = false;
+        }
     }
     property real menuGX: 0
     property real menuGY: 0
