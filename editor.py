@@ -449,7 +449,7 @@ def browser_action(address, window_class, action, arg=""):
         raise RuntimeError("Browser actions only work in a browser window.")
     focus = f'hl.dsp.focus({{ window = "address:{address}" }})'
     subprocess.run(["hyprctl", "dispatch", focus], check=True, capture_output=True)
-    time.sleep(0.2)
+    time.sleep(1.0)
     action = (action or "").lower()
     if action == "new_tab":
         subprocess.run(["wtype", "-M", "ctrl", "-k", "t"], check=True)
