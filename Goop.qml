@@ -14,9 +14,19 @@ import qs.Commons as Commons
 Scope {
     id: root
 
-    // Global position of the creature's centre. It starts at the top of the first monitor.
-    property real posGX: Quickshell.screens.length ? Quickshell.screens[0].x + Quickshell.screens[0].width / 2 : 0
-    property real posGY: Quickshell.screens.length ? Quickshell.screens[0].y + 70 : 0
+    // Start on the leftmost monitor so the creature is visible.
+    property real posGX: {
+        if (!Quickshell.screens.length) return 0;
+        let s = Quickshell.screens[0];
+        for (const sc of Quickshell.screens) if (sc.x < s.x) s = sc;
+        return s.x + s.width / 2;
+    }
+    property real posGY: {
+        if (!Quickshell.screens.length) return 0;
+        let s = Quickshell.screens[0];
+        for (const sc of Quickshell.screens) if (sc.x < s.x) s = sc;
+        return s.y + 70;
+    }
     // When docked, the creature is attached to a window and follows it; otherwise it floats.
     readonly property bool dockMode: agents.config.dockMode === "dock"
     onDockModeChanged: {
