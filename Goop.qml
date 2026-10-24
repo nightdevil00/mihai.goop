@@ -508,6 +508,17 @@ Scope {
             WlrLayershell.namespace: "goop"
             WlrLayershell.keyboardFocus: (root.promptOpen && here) ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
 
+            // Hide the prompt when the overlay loses keyboard focus (e.g. a click elsewhere).
+            Connections {
+                target: win
+                function onActiveChanged() {
+                    if (!win.active && root.promptOpen) {
+                        root.promptOpen = false;
+                        root.mood = "rest";
+                    }
+                }
+            }
+
             // Only the things the user can click take input; everything else reaches the windows below.
             mask: Region {
                 Region { item: blobHit }
