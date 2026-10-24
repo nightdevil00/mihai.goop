@@ -7,10 +7,21 @@
   "license": "MIT",
   "description": "A pink desktop creature that lives in the notch, attaches to a window, and takes requests for it through an agent you connect.",
   "kinds": [
-    "panel"
+    "panel",
+    "service",
+    "bar-widget"
   ],
   "keepLoaded": true,
   "entryPoints": {
-    "panel": "Goop.qml"
+    "panel": "Goop.qml",
+    "service": "Service.qml",
+    "barWidget": "BarWidget.qml"
+  },
+  "barWidget": {
+    "displayName": "goop",
+    "description": "Summon the goop creature.",
+    "category": "Utilities",
+    "allowMultiple": false,
+    "defaultSection": "right"
   }
 }

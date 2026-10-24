@@ -14,6 +14,8 @@ import qs.Commons as Commons
 Scope {
     id: root
 
+    property var service: null
+
     // Start on the leftmost monitor so the creature is visible.
     property real posGX: {
         if (!Quickshell.screens.length) return 0;
@@ -498,6 +500,7 @@ Scope {
             readonly property bool here: root.creatureScreen === modelData
 
             screen: modelData
+            visible: root.service ? !root.service.homeMode : true
             anchors { top: true; bottom: true; left: true; right: true }
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
@@ -675,6 +678,7 @@ Scope {
 
                         Repeater {
                             model: [
+                                { label: "Go home", action: "home" },
                                 { label: "Settings…", action: "settings" },
                                 { label: "Quit goop", action: "quit" }
                             ]
@@ -701,7 +705,9 @@ Scope {
                                     hoverEnabled: true
                                     onClicked: {
                                         root.menuOpen = false;
-                                        if (modelData.action === "settings")
+                                        if (modelData.action === "home") {
+                                            if (root.service) root.service.homeMode = true;
+                                        } else if (modelData.action === "settings")
                                             settings.visible = true;
                                         else
                                             Qt.quit();

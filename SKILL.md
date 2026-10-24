@@ -44,6 +44,11 @@ In agent mode the agent may run commands in the window's folder.
 - The agent runs the requested command in the folder Nautilus is showing and reports the result.
 - No typing is involved; the folder is detected from the window title.
 
+## Go home
+
+- Right-click the creature and choose **Go home** to tuck it into the bar (a red devil
+  icon). Click that icon to summon the creature again. The creature floats by default.
+
 ## Limits
 
 - Typed text goes to whichever application has focus inside the terminal. A full-screen app
