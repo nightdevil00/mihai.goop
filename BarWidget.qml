@@ -11,8 +11,12 @@ BarWidget {
     function lookup() {
         if (svc) return
         try {
-            if (bar && bar.shell && typeof bar.shell.serviceFor === "function")
-                svc = bar.shell.serviceFor(moduleName)
+            if (bar && bar.shell) {
+                if (typeof bar.shell.serviceFor === "function")
+                    svc = bar.shell.serviceFor(moduleName)
+                else if (bar.shell.services && bar.shell.services[moduleName])
+                    svc = bar.shell.services[moduleName]
+            }
         } catch (e) { svc = null }
     }
     onBarChanged: lookup()

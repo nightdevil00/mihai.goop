@@ -66,6 +66,10 @@ Scope {
 
     property string mood: "rest"
     property bool dragging: false
+    property bool mouseDown: false
+    property bool dragMoved: false
+    property real pressGX: 0
+    property real pressGY: 0
     property bool promptOpen: false
 
     // The creature keeps its signature pink when active; only the idle body follows the theme.
@@ -380,6 +384,10 @@ Scope {
         }
         offsetGX = x - posGX;
         offsetGY = y - posGY;
+        pressGX = x;
+        pressGY = y;
+        dragMoved = false;
+        mouseDown = true;
         dragging = true;
         happyTimer.stop();
         mood = "rest";
@@ -393,9 +401,11 @@ Scope {
     }
 
     function endDrag(x, y, dragged) {
+        if (!mouseDown) return;
+        mouseDown = false;
         dragging = false;
         dock.refresh();
-        if (!dragged) {
+        if (!dragged && !dragMoved) {
             // A click, not a drag: ask for a request.
             mood = "prompting";
             promptOpen = true;
@@ -552,7 +562,7 @@ Scope {
             }
             // While the prompt is open, accept input everywhere so a click anywhere
             // dismisses it; otherwise only the interactive bits take input.
-            mask: root.promptOpen ? fullMask : normalMask
+            mask: (root.promptOpen || root.mouseDown) ? fullMask : normalMask
 
             // Clicking anywhere outside the prompt while it is open dismisses it.
             MouseArea {
@@ -562,6 +572,28 @@ Scope {
                 onClicked: {
                     root.promptOpen = false;
                     root.mood = "rest";
+                }
+            }
+
+            // Full-screen tracker used while dragging, so the creature keeps following
+            // the pointer even when it (and its input mask) lag behind on a spring.
+            MouseArea {
+                anchors.fill: parent
+                z: 10
+                enabled: root.mouseDown
+                hoverEnabled: true
+                acceptedButtons: Qt.LeftButton
+                onPositionChanged: (mouse) => {
+                    if (!root.mouseDown) return;
+                    const g = { x: win.modelData.x + mouse.x, y: win.modelData.y + mouse.y };
+                    if (Math.hypot(g.x - root.pressGX, g.y - root.pressGY) > 6)
+                        root.dragMoved = true;
+                    root.moveDrag(g.x, g.y);
+                }
+                onReleased: (mouse) => {
+                    if (!root.mouseDown) return;
+                    const g = { x: win.modelData.x + mouse.x, y: win.modelData.y + mouse.y };
+                    root.endDrag(g.x, g.y, root.dragMoved);
                 }
             }
 

@@ -205,6 +205,7 @@ Item {
     MouseArea {
         id: pointer
         anchors.fill: parent
+        enabled: !root.dragging
         preventStealing: true
         acceptedButtons: Qt.LeftButton | Qt.RightButton
         property real pressX: 0
