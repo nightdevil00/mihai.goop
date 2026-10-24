@@ -132,9 +132,9 @@ and prints its reply on stdout.
 - **Media controls:** `play`, `pause`, `resume`, `stop`, and `play/pause` (or `toggle`)
   control the current media player through Omarchy's media service, with no agent
   round-trip.
-- **Go home:** right-click the creature and choose **Go home** to tuck it into the bar
-  (a red devil icon). Click that icon to summon the creature again. The creature floats
-  by default.
+- **Go home / Roam free:** right-click the creature (or the bar icon) and choose
+  **Go home** to tuck it into the bar (a red devil icon), or **Roam free** to bring it
+  back out. Click the bar icon to summon the creature. The creature floats by default.
 - **Choose a window:** drop it over the window you want. Whatever window is under the
   creature when you ask is the one the request applies to (the focused window is
   preferred).

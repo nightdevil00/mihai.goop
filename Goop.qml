@@ -511,7 +511,7 @@ Scope {
             readonly property bool here: root.creatureScreen === modelData
 
             screen: modelData
-            visible: root.service ? !root.service.homeMode : true
+            visible: root.service ? (!root.service.homeMode || root.menuOpen) : true
             anchors { top: true; bottom: true; left: true; right: true }
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
@@ -730,7 +730,11 @@ Scope {
                         anchors.margins: 6
 
                         Repeater {
-                            model: [
+                            model: root.service && root.service.homeMode ? [
+                                { label: "Roam free", action: "roam" },
+                                { label: "Settings…", action: "settings" },
+                                { label: "Quit goop", action: "quit" }
+                            ] : [
                                 { label: "Go home", action: "home" },
                                 { label: "Settings…", action: "settings" },
                                 { label: "Quit goop", action: "quit" }
@@ -760,6 +764,8 @@ Scope {
                                         root.menuOpen = false;
                                         if (modelData.action === "home") {
                                             if (root.service) root.service.homeMode = true;
+                                        } else if (modelData.action === "roam") {
+                                            if (root.service) root.service.homeMode = false;
                                         } else if (modelData.action === "settings")
                                             settings.visible = true;
                                         else

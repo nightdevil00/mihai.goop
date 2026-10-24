@@ -56,7 +56,6 @@ BarWidget {
         onClicked: (mouse) => {
             if (!root.svc) return
             const g = mapToGlobal(mouse.x, mouse.y)
-            root.svc.homeMode = false
             root.svc.requestMenu(g.x, g.y)
         }
     }
