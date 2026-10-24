@@ -125,6 +125,9 @@ and prints its reply on stdout.
   and requests that are already commands are typed straight into a terminal without an agent
   round-trip. Prefix any command with `run ` or `!` to force it, or type a natural-language
   request to let the agent answer.
+- **Open an app:** `open <app>`, `launch <app>`, and `start <app>` launch an application
+  directly (for example `open nautilus`, `open foot`), with no agent round-trip. URLs are
+  not treated as apps.
 - **Choose a window:** drop it over the window you want. Whatever window is under the
   creature when you ask is the one the request applies to (the focused window is
   preferred).
