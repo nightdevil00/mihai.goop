@@ -123,8 +123,9 @@ and prints its reply on stdout.
 - **Move it:** drag the creature anywhere, across any monitor. It has no home and no leash.
 - **Fast commands:** usual shell commands (`ls`, `pwd`, `clear`, `git status`, `cargo test`, …)
   and requests that are already commands are typed straight into a terminal without an agent
-  round-trip. Prefix any command with `run ` or `!` to force it, or type a natural-language
-  request to let the agent answer.
+  round-trip. Common natural-language shortcuts are expanded too (`status`, `diff`, `log`,
+  `pull`, `push`, `branches`, …). Prefix any command with `run ` or `!` to force it, or
+  type a natural-language request to let the agent answer.
 - **Open an app:** `open <app>`, `launch <app>`, and `start <app>` launch an application
   directly (for example `open nautilus`, `open foot`), with no agent round-trip. URLs are
   not treated as apps.

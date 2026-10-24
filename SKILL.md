@@ -29,7 +29,9 @@ In agent mode the agent may run commands in the window's folder.
 
 - Recognised requests are handled locally: `open tab`, `new window`, `reload`, `back`,
   `forward`, `close tab`, `close tab called <name>`, `switch to tab <name>`,
-  `navigate to <url>` / `open <url>`.
+  `navigate to <url>` / `open <url>`, and `search for <text>` / `find <text>` /
+  `click <text>` / `open <name>'s profile page`, which find the text on the page and
+  open the matching link.
 - Other requests are sent to the agent with the window title as context.
 
 ## When the creature is over a Nautilus window
