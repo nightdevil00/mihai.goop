@@ -41,11 +41,14 @@ BarWidget {
             if (buttonCode === Qt.LeftButton && root.svc) root.svc.summon()
         }
 
-        Text {
+        Image {
             id: content
             anchors.centerIn: parent
-            text: "😈"
-            font.pixelSize: Math.round(Style.bar.iconCanvas * 1.1)
+            source: Qt.resolvedUrl("devil.svg")
+            sourceSize.width: Math.round(Style.bar.iconCanvas * 1.4)
+            sourceSize.height: Math.round(Style.bar.iconCanvas * 1.4)
+            fillMode: Image.PreserveAspectFit
+            smooth: true
         }
     }
 }
