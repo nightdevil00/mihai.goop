@@ -666,13 +666,14 @@ Scope {
                     x: root.menuGX - win.modelData.x
                     y: root.menuGY - win.modelData.y
                     width: 150
-                    height: 74
+                    height: menuColumn.implicitHeight + 12
                     radius: 10
                     color: Commons.Color.menu.background
                     border.width: 1
                     border.color: Commons.Color.menu.border
 
                     Column {
+                        id: menuColumn
                         anchors.fill: parent
                         anchors.margins: 6
 
