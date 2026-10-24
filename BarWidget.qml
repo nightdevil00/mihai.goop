@@ -41,14 +41,12 @@ BarWidget {
             if (buttonCode === Qt.LeftButton && root.svc) root.svc.summon()
         }
 
-        Image {
+        Text {
             id: content
             anchors.centerIn: parent
-            source: Qt.resolvedUrl("devil.svg")
-            sourceSize.width: Math.round(Style.bar.iconCanvas * 1.4)
-            sourceSize.height: Math.round(Style.bar.iconCanvas * 1.4)
-            fillMode: Image.PreserveAspectFit
-            smooth: true
+            text: "😈"
+            font.family: "Noto Color Emoji"
+            font.pixelSize: Math.round(Style.bar.iconCanvas * 1.2)
         }
     }
 }
