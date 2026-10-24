@@ -106,9 +106,16 @@ Scope {
             if (tag === "apply")
                 root.show("applied", "Applied to " + target + ". Your editor should reload it. The original is backed up, so you can undo.");
         }
+        onOpened: (tag, app) => {
+            if (tag === "open") {
+                root.show("reply", "Opened " + (app || "application"));
+                autoCloseTimer.restart();
+                root.mood = "rest";
+            }
+        }
         onTyped: (tag, command) => {
             if (tag === "type") {
-                if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named)(:|$)/.test(command)) {
+                if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named|search)(:|$)/.test(command)) {
                     root.show("reply", "Browser: " + command);
                     autoCloseTimer.restart();
                 } else
@@ -210,6 +217,65 @@ Scope {
         return match ? match[1].trim() : "";
     }
 
+    // Common command names goop can type straight into a terminal without asking an agent.
+    readonly property var usualCommands: ["ls", "ll", "la", "pwd", "clear", "cls", "cd", "mkdir", "rmdir", "rm", "cp", "mv", "touch", "cat", "less", "more", "head", "tail", "grep", "find", "locate", "which", "whereis", "echo", "printf", "wc", "sort", "uniq", "diff", "patch", "tar", "zip", "unzip", "gzip", "gunzip", "chmod", "chown", "ln", "du", "df", "free", "top", "htop", "btop", "ps", "kill", "killall", "pkill", "jobs", "bg", "fg", "nohup", "time", "date", "whoami", "id", "uname", "hostname", "uptime", "history", "alias", "export", "source", "exit", "logout", "man", "tldr", "help", "sudo", "su", "apt", "pacman", "yay", "paru", "dnf", "brew", "npm", "npx", "pnpm", "yarn", "bun", "pip", "pip3", "poetry", "uv", "cargo", "rustc", "rustup", "go", "gofmt", "java", "javac", "mvn", "gradle", "node", "deno", "python", "python3", "make", "cmake", "ninja", "meson", "gcc", "g++", "clang", "clang++", "swift", "swiftc", "xcodebuild", "git", "gh", "docker", "podman", "kubectl", "helm", "terraform", "ansible", "ssh", "scp", "rsync", "curl", "wget", "ping", "traceroute", "ip", "ifconfig", "ss", "netstat", "systemctl", "journalctl", "loginctl", "hyprctl", "omarchy", "code", "zed", "nvim", "vim", "nano", "emacs", "wtype", "tree", "bat", "eza", "fd", "rg", "fzf", "zoxide", "lazygit", "lazydocker", "btop", "fastfetch", "neofetch"]
+
+    // Turn a terminal request into a shell command goop can type directly, or null to ask the agent.
+    function terminalCommand(text) {
+        const t = (text || "").trim();
+        if (!t)
+            return null;
+        // Natural-language shortcuts for the commands people ask for most.
+        if (/^(git\s+)?status$/i.test(t))
+            return "git status";
+        if (/^(show\s+)?(git\s+)?diff$/i.test(t))
+            return "git diff";
+        if (/^(git\s+)?log$/i.test(t) || /^commits?$/i.test(t) || /^recent\s+commits?$/i.test(t) || /^history$/i.test(t))
+            return "git log --oneline -10";
+        if (/^(git\s+)?pull$/i.test(t))
+            return "git pull";
+        if (/^(git\s+)?push$/i.test(t))
+            return "git push";
+        if (/^(git\s+)?fetch$/i.test(t))
+            return "git fetch";
+        if (/^branches?$/i.test(t))
+            return "git branch -a";
+        if (/^stash$/i.test(t))
+            return "git stash";
+        if (/^(stage|add)\s+all$/i.test(t))
+            return "git add -A";
+        if (/^clear$/i.test(t) || /^cls$/i.test(t))
+            return "clear";
+        if (/^pwd$/i.test(t) || /^where\s+am\s+i\??$/i.test(t) || /^current\s+(dir|directory)$/i.test(t))
+            return "pwd";
+        if (/^ls$/i.test(t) || /^list(\s+files)?$/i.test(t))
+            return "ls -la";
+        // Looks like a question or a natural-language request: let the agent handle it.
+        if (/[?]/.test(t))
+            return null;
+        if (/\b(please|explain|why|how|what|tell|describe|help|can you|could you|i want|i need|fix|implement|refactor|optimize|bug|error|summarize|review)\b/i.test(t))
+            return null;
+        const first = t.split(/\s+/)[0].toLowerCase().replace(/^.*\//, "");
+        if (root.usualCommands.indexOf(first) >= 0)
+            return t;
+        return null;
+    }
+
+    // Extract the text to look for when searching inside the page.
+    function searchArg(text) {
+        let s = (text || "").trim();
+        // Drop a leading verb.
+        s = s.replace(/^(search\s+for|search|find|locate|look\s+for|click\s+on|click|open|go\s+to|visit)\s+/i, "");
+        // Drop a trailing "and click ..." clause.
+        s = s.replace(/\s+and\s+click.*$/i, "");
+        // Drop trailing filler words.
+        s = s.replace(/\s+(profile\s+page|profile|page|link|on\s+this\s+page|in\s+this\s+page|that\s+link|this\s+link)$/i, "");
+        // Drop a possessive 's so "DHH's profile" becomes "DHH".
+        s = s.replace(/'s\b/g, "");
+        s = s.replace(/^["']|["']$/g, "").trim();
+        return s;
+    }
+
     // Parse a browser-control request. Returns {action, arg} or null.
     function browserCommand(text) {
         const t = (text || "").trim();
@@ -237,6 +303,17 @@ Scope {
         m = t.match(/^(switch|go)\s+to\s+tab\s+(.+)$/i) || t.match(/^focus\s+tab\s+(.+)$/i);
         if (m)
             return { action: "switch_tab", arg: m[1] };
+        // Search for text inside the current page and open the matching link
+        // (browser quick find). Triggered by an explicit search/find/click request,
+        // or by requests that mention a profile or link. Skip this when the request
+        // already contains a URL or host, so navigation still works.
+        const hasUrlOrHost = /(https?:\/\/\S+)/i.test(t) ||
+            /\b[a-z0-9][a-z0-9.-]*\.[a-z]{2,}(?:\/\S*)?\b/i.test(t);
+        if (!hasUrlOrHost && /\b(search|find|locate|click|profile|link)\b/i.test(t)) {
+            const sa = searchArg(t);
+            if (sa)
+                return { action: "search", arg: sa };
+        }
         // Typo-tolerant navigation: "go to", "got to", "goto", "navigate", "open", "visit".
         m = t.match(/^(g(?:oto|ot|o)|navigate(?:\s+to)?|open|visit)\s+(.+)$/i);
         if (m) {
@@ -327,6 +404,21 @@ Scope {
     }
 
     function doAsk(target, text) {
+        // Open an application by name without an agent round-trip.
+        const appMatch = text.match(/^(open|launch|start)\s+(.+)$/i);
+        if (appMatch) {
+            const arg = appMatch[2].trim();
+            const lowArg = arg.toLowerCase();
+            const browserWords = ["tab", "new tab", "window", "new window", "page", "this tab", "the tab"];
+            const naturalWords = /\b(the|this|that|these|those|a|an|my|your|file|folder|document|project|it|page|url|profile|link|click|search|find)\b/i;
+            const wordCount = arg.split(/\s+/).length;
+            if (browserWords.indexOf(lowArg) < 0 && wordCount <= 3 && !naturalWords.test(arg) && !/^(https?:\/\/|www\.)/i.test(arg) && !/\.[a-z]{2,}(\/|$)/i.test(arg)) {
+                root.show("busy", "Opening " + arg + "…");
+                root.mood = "thinking";
+                agents.openApp(arg, "open");
+                return;
+            }
+        }
         if (!target || !target.cls) {
             target = dock.clientAt(displayGX, displayGY);
         }
@@ -357,6 +449,14 @@ Scope {
         if (typed !== null) {
             agents.typeInto(target.address, target.cls, typed.trim(), "type");
             return;
+        }
+        // Usual commands are typed straight into a terminal, with no agent round-trip.
+        if (terminal) {
+            const usual = root.terminalCommand(text);
+            if (usual !== null) {
+                agents.typeInto(target.address, target.cls, usual.trim(), "type");
+                return;
+            }
         }
         pendingPrompt = text;
         proposal = "";

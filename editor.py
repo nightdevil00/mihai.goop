@@ -429,6 +429,103 @@ def revert(path):
     return {"ok": True, "target": target}
 
 
+DESKTOP_DIRS = ["/usr/share/applications", os.path.expanduser("~/.local/share/applications")]
+
+
+def _desktop_entries():
+    entries = []
+    for directory in DESKTOP_DIRS:
+        if not os.path.isdir(directory):
+            continue
+        for filename in os.listdir(directory):
+            if not filename.endswith(".desktop"):
+                continue
+            path = os.path.join(directory, filename)
+            name = ""
+            exec_line = ""
+            try:
+                with open(path, encoding="utf-8", errors="replace") as handle:
+                    for line in handle:
+                        if line.startswith("Name=") and not name:
+                            name = line[len("Name="):].strip()
+                        elif line.startswith("Exec=") and not exec_line:
+                            exec_line = line[len("Exec="):].strip()
+                        elif line.strip() == "[Desktop Entry]":
+                            continue
+            except OSError:
+                continue
+            if name or exec_line:
+                entries.append((filename, name, exec_line))
+    return entries
+
+
+def find_desktop_entry(name):
+    low = (name or "").strip().lower()
+    if not low:
+        return None
+    entries = _desktop_entries()
+    # Exact name match first.
+    for filename, entry_name, exec_line in entries:
+        if entry_name and entry_name.lower() == low:
+            return filename, entry_name, exec_line
+    # Then a name or desktop id containing the request.
+    for filename, entry_name, exec_line in entries:
+        desktop_id = filename[:-len(".desktop")]
+        if low in (entry_name or "").lower() or low in desktop_id.lower():
+            return filename, entry_name, exec_line
+    # Finally, match the executable basename.
+    for filename, entry_name, exec_line in entries:
+        if not exec_line:
+            continue
+        binary = exec_line.split()[0].split("/")[-1].lower()
+        if low == binary or low in binary:
+            return filename, entry_name, exec_line
+    return None
+
+
+def open_app(name):
+    name = (name or "").strip().strip("\"'")
+    if not name:
+        raise RuntimeError("No application name given.")
+    aliases = {
+        "files": "nautilus", "file manager": "nautilus", "filemanager": "nautilus",
+        "terminal": os.environ.get("TERMINAL", "foot"),
+        "browser": None,
+    }
+    low = name.lower()
+    if low in aliases and aliases[low]:
+        name = aliases[low]
+        low = name.lower()
+
+    # Direct executable on PATH.
+    binary = shutil.which(name) or shutil.which(name.lower())
+    if binary:
+        subprocess.Popen([binary], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return {"ok": True, "launched": os.path.basename(binary)}
+
+    entry = find_desktop_entry(name)
+    if entry:
+        filename, entry_name, exec_line = entry
+        desktop_id = filename[:-len(".desktop")]
+        if shutil.which("gtk-launch"):
+            subprocess.Popen(["gtk-launch", desktop_id], start_new_session=True,
+                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            return {"ok": True, "launched": entry_name or desktop_id}
+        # Fall back to parsing the Exec line.
+        if exec_line:
+            parts = exec_line.replace("%u", "").replace("%U", "").replace("%f", "").replace("%F", "").split()
+            if parts:
+                subprocess.Popen(parts, start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                return {"ok": True, "launched": entry_name or parts[0]}
+
+    # Last resort: let xdg-open try (handles urls and registered types).
+    if shutil.which("xdg-open"):
+        subprocess.Popen(["xdg-open", name], start_new_session=True, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        return {"ok": True, "launched": name}
+
+    raise RuntimeError(f"Could not find an application called {name!r}.")
+
+
 def type_into(address, window_class, command):
     if (window_class or "").lower() not in TERMINALS:
         raise RuntimeError("Commands can only be typed into a terminal window.")
@@ -488,6 +585,27 @@ def browser_action(address, window_class, action, arg=""):
         subprocess.run(["wtype", "-k", "Return"], check=True)
         time.sleep(0.2)
         subprocess.run(["wtype", "-M", "ctrl", "-k", "w"], check=True)
+    elif action == "search":
+        if not arg.strip():
+            raise RuntimeError("No text to search for.")
+        cls = (window_class or "").lower()
+        if cls in ("firefox", "firefox-esr", "zen", "zen-browser"):
+            # Firefox/Zen quick find for links: apostrophe, text, Enter.
+            subprocess.run(["wtype", "'"], check=True)
+            time.sleep(0.25)
+            subprocess.run(["wtype", "--", arg.strip()], check=True)
+            time.sleep(0.15)
+            subprocess.run(["wtype", "-k", "Return"], check=True)
+        else:
+            # Chrome/Chromium and friends: find the text, close the find bar
+            # (focus lands on the matched link), then open it with Enter.
+            subprocess.run(["wtype", "-M", "ctrl", "-k", "f"], check=True)
+            time.sleep(0.8)
+            subprocess.run(["wtype", "--", arg.strip()], check=True)
+            time.sleep(0.6)
+            subprocess.run(["wtype", "-k", "Escape"], check=True)
+            time.sleep(0.6)
+            subprocess.run(["wtype", "-k", "Return"], check=True)
     else:
         raise RuntimeError(f"Unknown browser action {action!r}.")
     return {"ok": True, "action": action, "arg": arg.strip()}
@@ -508,6 +626,8 @@ def main(argv):
             result = revert(argv[2])
         elif command == "type":
             result = type_into(argv[2], argv[3], argv[4])
+        elif command == "open":
+            result = open_app(argv[2] if len(argv) > 2 else "")
         elif command == "browser":
             result = browser_action(argv[2], argv[3], argv[4], argv[5] if len(argv) > 5 else "")
         else:

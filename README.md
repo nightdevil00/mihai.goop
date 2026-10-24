@@ -121,6 +121,10 @@ and prints its reply on stdout.
 ## Use
 
 - **Move it:** drag the creature anywhere, across any monitor. It has no home and no leash.
+- **Fast commands:** usual shell commands (`ls`, `pwd`, `clear`, `git status`, `cargo test`, …)
+  and requests that are already commands are typed straight into a terminal without an agent
+  round-trip. Prefix any command with `run ` or `!` to force it, or type a natural-language
+  request to let the agent answer.
 - **Choose a window:** drop it over the window you want. Whatever window is under the
   creature when you ask is the one the request applies to (the focused window is
   preferred).
@@ -141,7 +145,9 @@ backs up the original first, and **Undo** restores it.
   files that have no unsaved edits.
 - **Nautilus**: commands run in the folder its window is showing.
 - **Browser** (Chrome, Chromium, Brave, Firefox, Zen, Vivaldi, Edge, Opera): local
-  commands such as `open tab`, `close tab called X`, `navigate to example.com`.
+  commands such as `open tab`, `close tab called X`, `navigate to example.com`, and
+  `search for <text>` / `find <text>` / `click <text>` / `open <name>'s profile page`,
+  which find the text on the page and open the matching link.
 
 ## Checks
 

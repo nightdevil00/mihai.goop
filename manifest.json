@@ -2,7 +2,7 @@
   "schemaVersion": 1,
   "id": "mihai.goop",
   "name": "goop",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "author": "mihai",
   "license": "MIT",
   "description": "A pink desktop creature that lives in the notch, attaches to a window, and takes requests for it through an agent you connect.",

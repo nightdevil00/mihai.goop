@@ -10,6 +10,12 @@ In agent mode the agent may run commands in the window's folder.
 - goop shows the command with **Type** and **Discard**.
 - **Type** focuses that terminal window, types the command, and presses Enter.
 - A request that starts with `run ` or `!` skips the agent and types the rest right away.
+- `open <app>`, `launch <app>`, and `start <app>` launch an application directly (for example
+  `open nautilus`, `open foot`), with no agent round-trip. URLs are not treated as apps.
+- Common, already-command-like requests (such as `ls`, `pwd`, `clear`, `git status`, or any
+  command whose first word is a usual shell command) are typed straight into the terminal
+  without an agent round-trip, so goop answers them instantly. Natural-language requests
+  still go to the agent.
 
 ## When the creature is over an editor window with a file
 

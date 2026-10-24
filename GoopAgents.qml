@@ -19,6 +19,7 @@ QtObject {
     signal applied(string tag, string target)
     signal reverted(string tag, string target)
     signal typed(string tag, string command)
+    signal opened(string tag, string app)
     signal failed(string tag, string message)
 
     property Component runner: Component {
@@ -77,6 +78,10 @@ QtObject {
         run("type", tag, ["python3", editorScript, "type", address, windowClass, command]);
     }
 
+    function openApp(name, tag) {
+        run("open", tag, ["python3", editorScript, "open", name]);
+    }
+
     function browserAction(address, windowClass, action, arg, tag) {
         run("browser", tag, ["python3", editorScript, "browser", address, windowClass, action, arg]);
     }
@@ -129,6 +134,12 @@ QtObject {
                 root.typed(tag, answer.typed);
             else
                 root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not type the command"));
+        } else if (kind === "open") {
+            const answer = parse(stdout);
+            if (answer && answer.ok)
+                root.opened(tag, answer.launched || "");
+            else
+                root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not open the application"));
         } else if (kind === "browser") {
             const answer = parse(stdout);
             if (answer && answer.ok)
