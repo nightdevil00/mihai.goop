@@ -52,6 +52,11 @@ Rectangle {
         Keys.onEnterPressed: Keys.onReturnPressed
         Keys.onEscapePressed: root.cancelled()
 
+        onActiveFocusChanged: {
+            if (!activeFocus && root.expanded)
+                root.cancelled();
+        }
+
         Text {
 
             textFormat: Text.PlainText

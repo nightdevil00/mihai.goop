@@ -506,7 +506,7 @@ Scope {
             exclusionMode: ExclusionMode.Ignore
             WlrLayershell.layer: WlrLayer.Overlay
             WlrLayershell.namespace: "goop"
-            WlrLayershell.keyboardFocus: (root.promptOpen && here) ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
+            WlrLayershell.keyboardFocus: (root.promptOpen && here) ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
 
             // Hide the prompt when the overlay loses keyboard focus (e.g. a click elsewhere).
             Connections {
