@@ -8,6 +8,9 @@ Item {
 
     property bool homeMode: false
     property bool menuRequested: false
+    property bool promptRequested: false
+    property real promptX: 0
+    property real promptY: 0
     property real menuX: 0
     property real menuY: 0
 
@@ -17,5 +20,10 @@ Item {
         menuX = x;
         menuY = y;
         menuRequested = true;
+    }
+    function requestPrompt(x, y) {
+        promptX = x;
+        promptY = y;
+        promptRequested = true;
     }
 }

@@ -25,6 +25,14 @@ Scope {
                 root.service.menuRequested = false;
             }
         }
+        function onPromptRequestedChanged() {
+            if (root.service && root.service.promptRequested) {
+                root.posGX = root.service.promptX;
+                root.posGY = root.service.promptY;
+                root.promptOpen = true;
+                root.service.promptRequested = false;
+            }
+        }
     }
 
     // Start on the leftmost monitor so the creature is visible.
@@ -511,7 +519,7 @@ Scope {
             readonly property bool here: root.creatureScreen === modelData
 
             screen: modelData
-            visible: root.service ? (!root.service.homeMode || root.menuOpen) : true
+            visible: root.service ? (!root.service.homeMode || root.menuOpen || root.promptOpen) : true
             anchors { top: true; bottom: true; left: true; right: true }
             color: "transparent"
             exclusionMode: ExclusionMode.Ignore
@@ -570,6 +578,7 @@ Scope {
 
                 GoopBlob {
                     id: blob
+                    visible: !root.service || !root.service.homeMode
                     originX: win.modelData.x
                     originY: win.modelData.y
                     pullX: stage.px

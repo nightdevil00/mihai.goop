@@ -38,7 +38,10 @@ BarWidget {
         fixedHeight: root.vertical ? Math.round(content.implicitHeight + scaledVerticalPadding * 2) : -1
 
         onPressed: function(buttonCode) {
-            if (buttonCode === Qt.LeftButton && root.svc) root.svc.summon()
+            if (buttonCode === Qt.LeftButton && root.svc) {
+                const g = mapToGlobal(content.x + content.width / 2, content.y + content.height + 8)
+                root.svc.requestPrompt(g.x, g.y)
+            }
         }
 
         Text {
