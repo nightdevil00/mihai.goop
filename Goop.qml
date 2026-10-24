@@ -16,6 +16,17 @@ Scope {
 
     property var service: null
 
+    Connections {
+        target: root.service
+        enabled: root.service !== null
+        function onMenuRequestedChanged() {
+            if (root.service && root.service.menuRequested) {
+                root.openMenu(root.service.menuX, root.service.menuY);
+                root.service.menuRequested = false;
+            }
+        }
+    }
+
     // Start on the leftmost monitor so the creature is visible.
     property real posGX: {
         if (!Quickshell.screens.length) return 0;
@@ -596,6 +607,14 @@ Scope {
                     onCancelled: {
                         root.promptOpen = false;
                         root.mood = "rest";
+                    }
+                }
+                MouseArea {
+                    anchors.fill: parent
+                    acceptedButtons: Qt.RightButton
+                    onClicked: (mouse) => {
+                        const g = mapToGlobal(mouse.x, mouse.y);
+                        root.openMenu(g.x, g.y);
                     }
                 }
 

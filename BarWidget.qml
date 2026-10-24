@@ -49,4 +49,15 @@ BarWidget {
             font.pixelSize: Math.round(Style.bar.iconCanvas * 1.2)
         }
     }
+
+    MouseArea {
+        anchors.fill: parent
+        acceptedButtons: Qt.RightButton
+        onClicked: (mouse) => {
+            if (!root.svc) return
+            const g = mapToGlobal(mouse.x, mouse.y)
+            root.svc.homeMode = false
+            root.svc.requestMenu(g.x, g.y)
+        }
+    }
 }
