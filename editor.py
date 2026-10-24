@@ -628,6 +628,15 @@ def main(argv):
             result = type_into(argv[2], argv[3], argv[4])
         elif command == "open":
             result = open_app(argv[2] if len(argv) > 2 else "")
+        elif command == "media":
+            action = argv[2].strip() if len(argv) > 2 else "playPause"
+            mapping = {"playpause": "playPause", "play/pause": "playPause", "toggle": "playPause",
+                       "play": "play", "pause": "pause", "resume": "play", "stop": "pause"}
+            action = mapping.get(action.lower().replace(" ", ""), action)
+            if action not in ("play", "pause", "playPause"):
+                raise RuntimeError(f"Unknown media action {action!r}.")
+            subprocess.run(["omarchy", "shell", "media", action], check=True)
+            result = {"ok": True, "action": action}
         elif command == "browser":
             result = browser_action(argv[2], argv[3], argv[4], argv[5] if len(argv) > 5 else "")
         else:

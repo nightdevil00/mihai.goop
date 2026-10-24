@@ -129,6 +129,9 @@ and prints its reply on stdout.
 - **Open an app:** `open <app>`, `launch <app>`, and `start <app>` launch an application
   directly (for example `open nautilus`, `open foot`), with no agent round-trip. URLs are
   not treated as apps.
+- **Media controls:** `play`, `pause`, `resume`, `stop`, and `play/pause` (or `toggle`)
+  control the current media player through Omarchy's media service, with no agent
+  round-trip.
 - **Choose a window:** drop it over the window you want. Whatever window is under the
   creature when you ask is the one the request applies to (the focused window is
   preferred).

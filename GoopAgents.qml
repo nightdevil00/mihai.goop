@@ -20,6 +20,7 @@ QtObject {
     signal reverted(string tag, string target)
     signal typed(string tag, string command)
     signal opened(string tag, string app)
+    signal mediaChanged(string tag, string action)
     signal failed(string tag, string message)
 
     property Component runner: Component {
@@ -82,6 +83,10 @@ QtObject {
         run("open", tag, ["python3", editorScript, "open", name]);
     }
 
+    function mediaControl(action, tag) {
+        run("media", tag, ["python3", editorScript, "media", action]);
+    }
+
     function browserAction(address, windowClass, action, arg, tag) {
         run("browser", tag, ["python3", editorScript, "browser", address, windowClass, action, arg]);
     }
@@ -140,6 +145,12 @@ QtObject {
                 root.opened(tag, answer.launched || "");
             else
                 root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not open the application"));
+        } else if (kind === "media") {
+            const answer = parse(stdout);
+            if (answer && answer.ok)
+                root.mediaChanged(tag, answer.action || "");
+            else
+                root.failed(tag, answer && answer.error ? answer.error : (stderr || "Could not control media"));
         } else if (kind === "browser") {
             const answer = parse(stdout);
             if (answer && answer.ok)

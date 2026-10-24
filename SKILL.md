@@ -34,6 +34,11 @@ In agent mode the agent may run commands in the window's folder.
   open the matching link.
 - Other requests are sent to the agent with the window title as context.
 
+## Media controls (any window)
+
+- `play`, `pause`, `resume`, `stop`, and `play/pause` (or `toggle`) control the current
+  media player through Omarchy's media service, with no agent round-trip.
+
 ## When the creature is over a Nautilus window
 
 - The agent runs the requested command in the folder Nautilus is showing and reports the result.

@@ -113,6 +113,11 @@ Scope {
                 root.mood = "rest";
             }
         }
+        onMediaChanged: (tag, action) => {
+            root.show("reply", "Media: " + action);
+            autoCloseTimer.restart();
+            root.mood = "rest";
+        }
         onTyped: (tag, command) => {
             if (tag === "type") {
                 if (/^(new_tab|new_window|close_tab|reload|back|forward|navigate|switch_tab|close_tab_named|search)(:|$)/.test(command)) {
@@ -404,6 +409,21 @@ Scope {
     }
 
     function doAsk(target, text) {
+        // Media controls, handled directly without an agent.
+        const mediaMatch = text.trim().match(/^(?:(media|media player)\s+)?(play|pause|resume|stop|play\s*\/\s*pause|play\s+pause|toggle)$/i);
+        if (mediaMatch) {
+            let verb = mediaMatch[2].toLowerCase().replace(/\s+/g, "");
+            if (verb === "resume")
+                verb = "play";
+            if (verb === "stop")
+                verb = "pause";
+            if (verb === "playpause" || verb === "play/pause" || verb === "toggle")
+                verb = "playPause";
+            root.show("busy", "Controlling media\u2026");
+            root.mood = "thinking";
+            agents.mediaControl(verb, "media");
+            return;
+        }
         // Open an application by name without an agent round-trip.
         const appMatch = text.match(/^(open|launch|start)\s+(.+)$/i);
         if (appMatch) {
