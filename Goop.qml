@@ -519,13 +519,35 @@ Scope {
                 }
             }
 
-            // Only the things the user can click take input; everything else reaches the windows below.
-            mask: Region {
+            Region {
+                id: normalMask
                 Region { item: blobHit }
                 Region { item: promptHit }
                 Region { item: bubbleHit }
                 Region { item: menuHit }
             }
+            Region {
+                id: fullMask
+                x: 0; y: 0
+                width: win.width; height: win.height
+            }
+            // While the prompt is open, accept input everywhere so a click anywhere
+            // dismisses it; otherwise only the interactive bits take input.
+            mask: root.promptOpen ? fullMask : normalMask
+
+            // Clicking anywhere outside the prompt while it is open dismisses it.
+            MouseArea {
+                anchors.fill: parent
+                z: -1
+                enabled: root.promptOpen
+                onClicked: {
+                    root.promptOpen = false;
+                    root.mood = "rest";
+                }
+            }
+
+            // Only the things the user can click take input; everything else reaches the windows below.
+            // (mask above already handles the input region.)
 
             Item {
                 id: stage
